@@ -1,5 +1,15 @@
 # GitHub Actions Workflows
 
+> **planeodev fork (2026-10-01).** This fork builds its images with the org's Vionix CI/CD reusable
+> workflow, [docker-multiarch-cicd.yaml](docker-multiarch-cicd.yaml): one matrix call per service,
+> baking the root `docker-compose.yaml` and publishing to `ghcr.io/planeodev/gcp-microservices-demo/<service>`
+> (PR previews under `pr/<N>/<service>`, `main` builds, `v*` releases), with the reusable's SBOM,
+> build-info and SLSA report. The upstream pipelines below — `ci-pr.yaml`, `ci-main.yaml`,
+> `push-deploy.yaml`, `cleanup.yaml` — were **removed** here: they need Google's self-hosted GCE
+> runners and push to Google's own project, so on this fork they would only queue forever. The
+> ubuntu-hosted validation workflows (`kustomize-build-ci`, `helm-chart-ci`, `terraform-validate-ci`)
+> are kept. Everything below this note describes the upstream setup, for reference.
+
 This page describes the CI/CD workflows for the Online Boutique app, which run in [Github Actions](https://github.com/GoogleCloudPlatform/microservices-demo/actions).
 
 ## Infrastructure

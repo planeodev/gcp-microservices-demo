@@ -1,0 +1,56 @@
+# Vionix CI/CD onboarding (skill: ohanalabs-ai/claude-agents `vionix-docker-multiarch-cicd`).
+# One reusable call per Online Boutique service (matrix), each baking its docker-compose.yaml
+# service and publishing:
+#   PR      → ghcr.io/planeodev/gcp-microservices-demo/pr/<N>/<service>:<sha>   (preview)
+#   main    → ghcr.io/planeodev/gcp-microservices-demo/<service>:main
+#   tag v*  → ghcr.io/planeodev/gcp-microservices-demo/<service>:<tag>          (release)
+# with the reusable's SBOM / build-info artifact metadata and SLSA report. Image scanning is the
+# org's manifest-driven image-security reusable (ohanalabs-ai/github-platform PR #35, draft) — it
+# is wired in a follow-up once that merges; until then the published digests are NOT scan-cleared
+# and planeo-infra keeps the demo pinned to upstream digests (its scan gate).
+name: 🐳 docker-multiarch-cicd
+run-name: 🐳 Online Boutique images ${{ github.ref_name }} @ ${{ github.sha }}
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+
+jobs:
+  docker:
+    name: 🐳 ${{ matrix.service }}
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          - adservice
+          - cartservice
+          - checkoutservice
+          - currencyservice
+          - emailservice
+          - frontend
+          - paymentservice
+          - productcatalogservice
+          - recommendationservice
+          - shippingservice
+    uses: ohanalabs-ai/github-platform/.github/workflows/docker-multiarch-cicd.yaml@main
+    permissions:
+      contents: write           # releases on tags
+      packages: write           # push to ghcr.io
+      id-token: write           # OIDC for attestations
+      attestations: write       # build provenance
+      artifact-metadata: write  # SBOM / image info — omit it and the run fails with zero jobs
+      pull-requests: write      # preview-image comment on the PR
+    with:
+      registry: ghcr.io
+      platforms: linux/amd64
+      docker-compose-file-name: docker-compose.yaml
+      docker-compose-target-service: ${{ matrix.service }}
+      image-name-suffix: ${{ matrix.service }}
+      # Java (adservice) and .NET (cartservice) builds exceed the reusable's 10-minute default.
+      github-job-timeout-minutes: 30
+      push-attestations: "false"
