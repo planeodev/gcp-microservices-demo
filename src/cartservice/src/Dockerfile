@@ -1,3 +1,5 @@
+# planeodev CI: built by .github/workflows/docker-multiarch-cicd-cartservice.yaml ONLY when src/cartservice/** (or that
+# workflow) changes. Edit this comment to force a rebuild of this image without a code change.
 # Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

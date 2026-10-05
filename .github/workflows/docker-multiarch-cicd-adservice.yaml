@@ -17,12 +17,21 @@
 name: 🐳 adservice
 run-name: 🐳 adservice image ${{ github.ref_name }} @ ${{ github.sha }}
 
+# Build ONLY when this service changes: its directory or this file. Path filters are not
+# evaluated for tag pushes, so a `v*` release still builds every service. To force a rebuild of
+# one service without a code change, touch its Dockerfile (e.g. edit the header comment).
 on:
   pull_request:
     types: [opened, synchronize, reopened, closed]
+    paths:
+      - "src/adservice/**"
+      - ".github/workflows/docker-multiarch-cicd-adservice.yaml"
   push:
     branches:
       - main
+    paths:
+      - "src/adservice/**"
+      - ".github/workflows/docker-multiarch-cicd-adservice.yaml"
     tags:
       - "v*"
 
