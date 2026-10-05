@@ -26,17 +26,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        service:
-          - adservice
-          - cartservice
-          - checkoutservice
-          - currencyservice
-          - emailservice
-          - frontend
-          - paymentservice
-          - productcatalogservice
-          - recommendationservice
-          - shippingservice
+        # `context` MUST match the service's `build.context` in docker-compose.yaml: the reusable
+        # overrides the bake target's context with its `docker-compose-context` input
+        # (`<service>.context=${{ inputs.docker-compose-context }}`, default "."), so leaving it at
+        # the default makes every build look for ./Dockerfile at the repo root
+        # ("failed to read dockerfile: open Dockerfile: no such file or directory", run 36923368117).
+        # The compose file itself is still located from the repo root by docker-compose-file-name.
+        include:
+          - { service: adservice, context: ./src/adservice }
+          - { service: cartservice, context: ./src/cartservice/src }
+          - { service: checkoutservice, context: ./src/checkoutservice }
+          - { service: currencyservice, context: ./src/currencyservice }
+          - { service: emailservice, context: ./src/emailservice }
+          - { service: frontend, context: ./src/frontend }
+          - { service: paymentservice, context: ./src/paymentservice }
+          - { service: productcatalogservice, context: ./src/productcatalogservice }
+          - { service: recommendationservice, context: ./src/recommendationservice }
+          - { service: shippingservice, context: ./src/shippingservice }
     uses: ohanalabs-ai/github-platform/.github/workflows/docker-multiarch-cicd.yaml@main
     permissions:
       contents: write           # releases on tags
@@ -48,8 +54,9 @@ jobs:
     with:
       registry: ghcr.io
       platforms: linux/amd64
-      docker-compose-file-name: docker-compose.yaml
-      docker-compose-target-service: ${{ matrix.service }}
+      docker-compose-context: ${{ matrix.context }}          # the service's build context (see matrix)
+      docker-compose-file-name: docker-compose.yaml          # root of the repo; .yaml, not .yml
+      docker-compose-target-service: ${{ matrix.service }}   # one compose service per matrix leg
       image-name-suffix: ${{ matrix.service }}
       # Java (adservice) and .NET (cartservice) builds exceed the reusable's 10-minute default.
       github-job-timeout-minutes: 30
