@@ -1,0 +1,49 @@
+# Vionix CI/CD onboarding (skill: ohanalabs-ai/claude-agents `vionix-docker-multiarch-cicd`).
+# ONE FILE PER SERVICE — not a matrix: every call of the reusable produces jobs with the same
+# names, so matrix legs (or several jobs in one workflow) collide. Siblings:
+# .github/workflows/docker-multiarch-cicd-<service>.yaml, one per docker-compose.yaml service.
+#
+# Builds the `adservice` service of docker-compose.yaml and publishes:
+#   PR      → ghcr.io/planeodev/gcp-microservices-demo/pr/<N>/adservice:<sha>   (preview)
+#   main    → ghcr.io/planeodev/gcp-microservices-demo/adservice:main
+#   tag v*  → ghcr.io/planeodev/gcp-microservices-demo/adservice:<tag>          (release)
+# with the reusable's SBOM / build-info artifact metadata and SLSA report. Image scanning is the
+# org's image-security reusable (ohanalabs-ai/github-platform PR #35, draft) — wired in a
+# follow-up; until then these digests are NOT scan-cleared (planeo-infra keeps its scan gate).
+#
+# docker-compose-context MUST equal the service's `build.context` in docker-compose.yaml: the
+# reusable overrides the bake target's context with this input (default "."), and "." makes the
+# build look for ./Dockerfile at the repo root ("failed to read dockerfile", run 36923368117).
+name: 🐳 adservice
+run-name: 🐳 adservice image ${{ github.ref_name }} @ ${{ github.sha }}
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+
+jobs:
+  docker:
+    name: 🐳 adservice
+    uses: ohanalabs-ai/github-platform/.github/workflows/docker-multiarch-cicd.yaml@main
+    permissions:
+      contents: write           # releases on tags
+      packages: write           # push to ghcr.io
+      id-token: write           # OIDC for attestations
+      attestations: write       # build provenance
+      artifact-metadata: write  # SBOM / image info — omit it and the run fails with zero jobs
+      pull-requests: write      # preview-image comment on the PR
+    with:
+      registry: ghcr.io
+      platforms: linux/amd64                       # single-arch: Dockerfiles pin amd64 base digests
+      docker-compose-context: ./src/adservice
+      docker-compose-file-name: docker-compose.yaml  # at the repo root; .yaml, not .yml
+      docker-compose-target-service: adservice
+      image-name-suffix: adservice
+      # Java build exceeds the reusable's 10-minute default.
+      github-job-timeout-minutes: 30
+      push-attestations: "false"

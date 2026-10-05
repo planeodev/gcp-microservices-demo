@@ -1,8 +1,11 @@
 # GitHub Actions Workflows
 
 > **planeodev fork (2026-10-01).** This fork builds its images with the org's Vionix CI/CD reusable
-> workflow, [docker-multiarch-cicd.yaml](docker-multiarch-cicd.yaml): one matrix call per service,
-> baking the root `docker-compose.yaml` and publishing to `ghcr.io/planeodev/gcp-microservices-demo/<service>`
+> workflow — **one caller file per service**, `docker-multiarch-cicd-<service>.yaml` (ten files, not a
+> matrix: every call of the reusable produces identically named jobs, so matrix legs collide). Each
+> passes `docker-compose-context` = that service's `build.context` (the reusable overrides the bake
+> context with it; the default `.` looks for a root Dockerfile), bakes its target from the root
+> `docker-compose.yaml` and publishes to `ghcr.io/planeodev/gcp-microservices-demo/<service>`
 > (PR previews under `pr/<N>/<service>`, `main` builds, `v*` releases), with the reusable's SBOM,
 > build-info and SLSA report. The upstream pipelines below — `ci-pr.yaml`, `ci-main.yaml`,
 > `push-deploy.yaml`, `cleanup.yaml` — were **removed** here: they need Google's self-hosted GCE
