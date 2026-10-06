@@ -6,7 +6,7 @@
 > passes `docker-compose-context` = that service's `build.context` (the reusable overrides the bake
 > context with it; the default `.` looks for a root Dockerfile), bakes its target from the root
 > `docker-compose.yaml` and publishes to `ghcr.io/planeodev/gcp-microservices-demo/<service>`
-> (PR previews under `pr/<N>/<service>`, `main` builds, `v*` releases), with the reusable's SBOM,
+> (PR previews under `pr/<N>/<service>`, `main` builds, `v*` releases); a second job `scan` (`needs: docker`) runs the org's image-security reusable on that image — SBOM from the build, `trivy sbom`, fails the run on CRITICAL findings — with the reusable's SBOM,
 > build-info and SLSA report. The upstream pipelines below — `ci-pr.yaml`, `ci-main.yaml`,
 > `push-deploy.yaml`, `cleanup.yaml` — were **removed** here: they need Google's self-hosted GCE
 > runners and push to Google's own project, so on this fork they would only queue forever. The

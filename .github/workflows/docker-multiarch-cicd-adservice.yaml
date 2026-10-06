@@ -38,7 +38,8 @@ on:
 jobs:
   docker:
     name: 🐳 adservice
-    uses: ohanalabs-ai/github-platform/.github/workflows/docker-multiarch-cicd.yaml@main
+    # Pinned to https://github.com/ohanalabs-ai/github-platform/pull/38 (adds the image_ref output) — back to @main once it merges.
+    uses: ohanalabs-ai/github-platform/.github/workflows/docker-multiarch-cicd.yaml@7087a37aa5bbf6cae7a6026292f43b74f0adef6c
     permissions:
       contents: write           # releases on tags
       packages: write           # push to ghcr.io
@@ -56,3 +57,19 @@ jobs:
       # Java build exceeds the reusable's 10-minute default.
       github-job-timeout-minutes: 30
       push-attestations: "false"
+
+  # Build-phase image security gate: runs only after this image's build succeeded; the policy
+  # (fail on CRITICAL) and the failure live inside the reusable. Thin caller — no logic here.
+  scan:
+    name: 🛡️ adservice scan
+    needs: docker
+    # Pinned to https://github.com/ohanalabs-ai/github-platform/pull/40 — back to @main once it merges.
+    uses: ohanalabs-ai/github-platform/.github/workflows/docker-image-security.yaml@d7561bf61e94b25b4428a1e4611883ea5d51cb4a
+    permissions:
+      contents: read
+      packages: read
+      attestations: read
+      pull-requests: write
+    with:
+      image: ${{ needs.docker.outputs.image_ref }}
+      severity-threshold: CRITICAL
