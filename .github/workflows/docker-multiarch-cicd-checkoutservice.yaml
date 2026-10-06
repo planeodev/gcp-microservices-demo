@@ -62,8 +62,8 @@ jobs:
   scan:
     name: 🛡️ checkoutservice scan
     needs: docker
-    # Pinned to https://github.com/ohanalabs-ai/github-platform/pull/40 — back to @main once it merges.
-    uses: ohanalabs-ai/github-platform/.github/workflows/docker-image-security.yaml@f00c219517f7c63b099ce5e644ac515d2add8500
+    # Pinned to https://github.com/ohanalabs-ai/github-platform/pull/41 (stacked on #40) — back to @main once both merge.
+    uses: ohanalabs-ai/github-platform/.github/workflows/docker-image-security.yaml@b170a75879494019414db0ce20eddbb3952615a6
     permissions:
       contents: read
       packages: read
