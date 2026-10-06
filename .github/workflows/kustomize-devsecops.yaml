@@ -19,8 +19,7 @@ on:
 jobs:
   kustomize:
     name: 🧪 kustomize
-    # pinned to ohanalabs-ai/github-platform PR #42's head for the trial — back to @main once it merges
-    uses: ohanalabs-ai/github-platform/.github/workflows/kubernetes-kustomize-devsecops.yaml@6d125a74bb68a30cf52d2dfb7fc30bbd5ef3d6f6
+    uses: ohanalabs-ai/github-platform/.github/workflows/kubernetes-kustomize-devsecops.yaml@main
     permissions:
       contents: read
       packages: read         # this repo's private ghcr.io images
