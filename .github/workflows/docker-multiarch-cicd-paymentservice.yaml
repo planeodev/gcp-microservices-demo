@@ -63,7 +63,7 @@ jobs:
     name: 🛡️ paymentservice scan
     needs: docker
     # Pinned to https://github.com/ohanalabs-ai/github-platform/pull/40 — back to @main once it merges.
-    uses: ohanalabs-ai/github-platform/.github/workflows/docker-image-security.yaml@d7561bf61e94b25b4428a1e4611883ea5d51cb4a
+    uses: ohanalabs-ai/github-platform/.github/workflows/docker-image-security.yaml@3c67ade9cffb1fc8ed5fb4ca4d374375a43c3f89
     permissions:
       contents: read
       packages: read
