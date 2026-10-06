@@ -1,0 +1,39 @@
+# The base with this fork's OWN images — the ten services the docker-multiarch-cicd-<service>.yaml
+# workflows publish to ghcr.io/planeodev/gcp-microservices-demo/<service> (private packages) —
+# so the 🧪 kustomize check proves they are pullable and carry linux/amd64. loadgenerator and
+# redis stay upstream (not built here). Bump newTag with the main-<sha> the builds publish.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+images:
+  - name: gcr.io/google-samples/microservices-demo/adservice
+    newName: ghcr.io/planeodev/gcp-microservices-demo/adservice
+    newTag: main-078146a
+  - name: gcr.io/google-samples/microservices-demo/cartservice
+    newName: ghcr.io/planeodev/gcp-microservices-demo/cartservice
+    newTag: main-078146a
+  - name: gcr.io/google-samples/microservices-demo/checkoutservice
+    newName: ghcr.io/planeodev/gcp-microservices-demo/checkoutservice
+    newTag: main-078146a
+  - name: gcr.io/google-samples/microservices-demo/currencyservice
+    newName: ghcr.io/planeodev/gcp-microservices-demo/currencyservice
+    newTag: main-078146a
+  - name: gcr.io/google-samples/microservices-demo/emailservice
+    newName: ghcr.io/planeodev/gcp-microservices-demo/emailservice
+    newTag: main-078146a
+  - name: gcr.io/google-samples/microservices-demo/frontend
+    newName: ghcr.io/planeodev/gcp-microservices-demo/frontend
+    newTag: main-078146a
+  - name: gcr.io/google-samples/microservices-demo/paymentservice
+    newName: ghcr.io/planeodev/gcp-microservices-demo/paymentservice
+    newTag: main-078146a
+  - name: gcr.io/google-samples/microservices-demo/productcatalogservice
+    newName: ghcr.io/planeodev/gcp-microservices-demo/productcatalogservice
+    newTag: main-078146a
+  - name: gcr.io/google-samples/microservices-demo/recommendationservice
+    newName: ghcr.io/planeodev/gcp-microservices-demo/recommendationservice
+    newTag: main-078146a
+  - name: gcr.io/google-samples/microservices-demo/shippingservice
+    newName: ghcr.io/planeodev/gcp-microservices-demo/shippingservice
+    newTag: main-078146a
