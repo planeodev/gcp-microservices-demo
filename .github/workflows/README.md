@@ -18,7 +18,7 @@
 > findings with their fix path) and fails the PR when an image is above its policy. With
 > `accept-trivy-job-patches: critical` it commits only the **deterministic** fixes (Go modules, pip
 > pins). **Every fix is a declarative source change that rebuilds the image** — the built image is
-> never patched afterwards (Copa was removed for that reason). OS packages are fixed by a newer base
+> never patched afterwards. OS packages are fixed by a newer base
 > image (`base-image`: Dependabot's `docker` ecosystem bumps the `FROM`, see `.github/dependabot.yml`)
 > or, when the Dockerfile installs the package itself, by pinning it on that `apk`/`apt` line
 > (`dockerfile`). Language dependencies are Dependabot's (`dependabot-lang`).
