@@ -62,6 +62,10 @@ jobs:
   scan:
     name: 🛡️ paymentservice scan
     needs: docker
+    # Owner decision 2026-10-05: scan on pull requests only. A merge to main (and a v* tag) builds and
+    # publishes the demo image without the scan gate — the images carry known CVEs whose remediation
+    # is deferred (planeo-infra BACKLOG). This `if:` is the one sanctioned exception to the thin-caller rule.
+    if: github.event_name == 'pull_request'
     # Pinned to https://github.com/ohanalabs-ai/github-platform/pull/41 (stacked on #40) — back to @main once both merge.
     uses: ohanalabs-ai/github-platform/.github/workflows/docker-image-security.yaml@b1fd96e79f468d76863250b958219d61075641b7
     permissions:
