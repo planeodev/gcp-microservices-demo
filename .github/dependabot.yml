@@ -1,5 +1,7 @@
 # Dependabot owns language dependencies and base images (the pr-security-synchronizer only commits
-# deterministic Go-module / pip-pin fixes from Trivy; Copa patches OS packages in the built image).
+# deterministic Go-module / pip-pin fixes from Trivy). OS packages are fixed declaratively: a newer
+# base image (the `docker` ecosystem below bumps each FROM) or an explicit Dockerfile change — never by
+# patching a built image.
 # One entry per ecosystem per service directory.
 version: 2
 updates:

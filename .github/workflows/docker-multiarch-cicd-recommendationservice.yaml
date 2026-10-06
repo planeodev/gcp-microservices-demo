@@ -63,7 +63,7 @@ jobs:
     name: 🛡️ recommendationservice scan
     needs: docker
     # Pinned to https://github.com/ohanalabs-ai/github-platform/pull/41 (stacked on #40) — back to @main once both merge.
-    uses: ohanalabs-ai/github-platform/.github/workflows/docker-image-security.yaml@49dd586020fda4c3e5a6ecc99905245521106081
+    uses: ohanalabs-ai/github-platform/.github/workflows/docker-image-security.yaml@b1fd96e79f468d76863250b958219d61075641b7
     permissions:
       contents: read
       packages: read
