@@ -38,8 +38,7 @@ on:
 jobs:
   docker:
     name: 🐳 adservice
-    # Pinned to https://github.com/ohanalabs-ai/github-platform/pull/38 (adds the image_ref output) — back to @main once it merges.
-    uses: ohanalabs-ai/github-platform/.github/workflows/docker-multiarch-cicd.yaml@7087a37aa5bbf6cae7a6026292f43b74f0adef6c
+    uses: ohanalabs-ai/github-platform/.github/workflows/docker-multiarch-cicd.yaml@main
     permissions:
       contents: write           # releases on tags
       packages: write           # push to ghcr.io
@@ -67,8 +66,7 @@ jobs:
     # publishes the demo image without the scan gate — the images carry known CVEs whose remediation
     # is deferred (planeo-infra BACKLOG). This `if:` is the one sanctioned exception to the thin-caller rule.
     if: github.event_name == 'pull_request'
-    # Pinned to https://github.com/ohanalabs-ai/github-platform/pull/41 (stacked on #40) — back to @main once both merge.
-    uses: ohanalabs-ai/github-platform/.github/workflows/docker-image-security.yaml@86d990df0bd8ee52c95781007639fdfb2078c97e
+    uses: ohanalabs-ai/github-platform/.github/workflows/docker-image-security.yaml@main
     permissions:
       contents: read
       packages: read
