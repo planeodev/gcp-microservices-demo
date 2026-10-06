@@ -1,0 +1,33 @@
+# 🧪 Will the kustomize/ manifests actually run? — thin caller of the org's
+# ohanalabs-ai/github-platform kubernetes-kustomize-devsecops.yaml (products/devsecops-kubernetes):
+# kustomize build (the base + every kustomize/tests/* combination), kubeconform for the demo GKE
+# Kubernetes, removed APIs, and IMAGE AVAILABILITY (manifest + digest + linux/amd64) — this repo's
+# GITHUB_TOKEN (packages: read) is the profile for its own private ghcr.io images. Replaces the
+# inherited upstream kustomize-build-ci.yaml (build only). No logic here.
+name: 🧪 kustomize-devsecops
+
+on:
+  pull_request:
+    paths:
+      - "kustomize/**"
+      - ".github/workflows/kustomize-devsecops.yaml"
+  push:
+    branches: [main]
+    paths:
+      - "kustomize/**"
+
+jobs:
+  kustomize:
+    name: 🧪 kustomize
+    # pinned to ohanalabs-ai/github-platform PR #42's head for the trial — back to @main once it merges
+    uses: ohanalabs-ai/github-platform/.github/workflows/kubernetes-kustomize-devsecops.yaml@6d125a74bb68a30cf52d2dfb7fc30bbd5ef3d6f6
+    permissions:
+      contents: read
+      packages: read         # this repo's private ghcr.io images
+      pull-requests: write   # sticky report comment
+    with:
+      paths: |
+        kustomize
+        kustomize/tests
+      kubernetes-version: "1.35.0"
+      title: gcp-microservices-demo kustomize
