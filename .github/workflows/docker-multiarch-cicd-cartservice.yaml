@@ -64,7 +64,7 @@ jobs:
     name: 🛡️ cartservice scan
     needs: docker
     # Pinned to https://github.com/ohanalabs-ai/github-platform/pull/40 — back to @main once it merges.
-    uses: ohanalabs-ai/github-platform/.github/workflows/docker-image-security.yaml@3c67ade9cffb1fc8ed5fb4ca4d374375a43c3f89
+    uses: ohanalabs-ai/github-platform/.github/workflows/docker-image-security.yaml@f00c219517f7c63b099ce5e644ac515d2add8500
     permissions:
       contents: read
       packages: read

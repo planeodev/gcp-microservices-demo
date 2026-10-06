@@ -1,0 +1,25 @@
+# Evaluate-and-decide over every image build + scan of this PR (ohanalabs-ai/github-platform
+# pr-security-synchronizer.yaml). The ten per-service workflows (docker-multiarch-cicd-<service>.yaml)
+# have no shared needs: graph; the reusable waits for all of them, consolidates the Trivy results
+# into one table, applies the accepted fixes and decides. Thin caller — no logic here.
+# Pinned to github-platform PR #41's head (stacked on #40) until it merges — then switch to @main.
+name: 🛡️ pr-security-synchronizer
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sync:
+    name: 🛡️ synchronizer
+    uses: ohanalabs-ai/github-platform/.github/workflows/pr-security-synchronizer.yaml@f00c219517f7c63b099ce5e644ac515d2add8500
+    permissions:
+      contents: write        # the one fix commit on this PR
+      pull-requests: write   # sticky consolidated comment
+      checks: read           # discover the builds + scans of the head SHA
+      actions: read          # download each scan's Trivy JSON artifact
+      packages: write        # Copa pushes <repo>:src-<digest>-patched
+    secrets: inherit         # SYNC_APP_ID / SYNC_APP_PRIVATE_KEY when the org adds the App
+    with:
+      accept-trivy-job-patches: critical
+      copa: true
