@@ -1,3 +1,5 @@
+# planeodev CI: built by .github/workflows/docker-multiarch-cicd-productcatalogservice.yaml ONLY when src/productcatalogservice/** (or that
+# workflow) changes. Edit this comment to force a rebuild of this image without a code change.
 # Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

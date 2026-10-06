@@ -1,0 +1,34 @@
+# Build definition for the Vionix CI/CD reusable workflow
+# (ohanalabs-ai/github-platform/.github/workflows/docker-multiarch-cicd.yaml), which bakes ONE
+# compose service per call — .github/workflows/docker-multiarch-cicd.yaml runs a matrix over the
+# services below and publishes each to ghcr.io/planeodev/gcp-microservices-demo/<service>.
+# Also usable locally: `docker compose build <service>`.
+#
+# The ten Online Boutique services planeo deploys (planeo-infra PR 366: the presentation demo on
+# GKE demo-2). `loadgenerator` is deliberately absent: it is never deployed (removed by a delete
+# patch in planeo-infra), so building it would only cost CI time and a scan.
+#
+# Single-arch (linux/amd64) on purpose: the Dockerfiles pin their base images by digest and
+# cartservice's runtime image is the amd64-only `runtime-deps:…-alpine3.16-amd64`; the demo
+# clusters are amd64. Multi-arch needs index digests in every FROM first.
+services:
+  adservice:
+    build: { context: ./src/adservice }
+  cartservice:
+    build: { context: ./src/cartservice/src }
+  checkoutservice:
+    build: { context: ./src/checkoutservice }
+  currencyservice:
+    build: { context: ./src/currencyservice }
+  emailservice:
+    build: { context: ./src/emailservice }
+  frontend:
+    build: { context: ./src/frontend }
+  paymentservice:
+    build: { context: ./src/paymentservice }
+  productcatalogservice:
+    build: { context: ./src/productcatalogservice }
+  recommendationservice:
+    build: { context: ./src/recommendationservice }
+  shippingservice:
+    build: { context: ./src/shippingservice }

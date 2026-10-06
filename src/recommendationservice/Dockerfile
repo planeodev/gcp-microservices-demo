@@ -1,3 +1,5 @@
+# planeodev CI: built by .github/workflows/docker-multiarch-cicd-recommendationservice.yaml ONLY when src/recommendationservice/** (or that
+# workflow) changes. Edit this comment to force a rebuild of this image without a code change.
 # Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM python:3.10.11-slim@sha256:89648909125f37eeff6dee35491e6295c77b76c42aa1aff2523478990e73d3fe as base
+# planeodev fork: python:3.10.11-slim (Debian 11 bullseye) can no longer apt-get —
+# bullseye-security returns 404 (EOL). Same Python minor on Debian 12, pinned by index digest.
+FROM python:3.10-slim-bookworm@sha256:f8aa74bffbe59d02f7442dba43c9ea72b2c34cc29aa7a7edc74b29521b23bb43 as base
 
 FROM base as builder
 

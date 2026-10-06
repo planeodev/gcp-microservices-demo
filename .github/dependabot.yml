@@ -1,0 +1,38 @@
+# Dependabot owns language dependencies and base images (the pr-security-synchronizer only commits
+# deterministic Go-module / pip-pin fixes from Trivy). OS packages are fixed declaratively: a newer
+# base image (the `docker` ecosystem below bumps each FROM) or an explicit Dockerfile change — never by
+# patching a built image.
+# One entry per ecosystem per service directory.
+version: 2
+updates:
+  # Go
+  - { package-ecosystem: gomod, directory: /src/checkoutservice,       schedule: { interval: weekly }, open-pull-requests-limit: 5 }
+  - { package-ecosystem: gomod, directory: /src/frontend,              schedule: { interval: weekly }, open-pull-requests-limit: 5 }
+  - { package-ecosystem: gomod, directory: /src/productcatalogservice, schedule: { interval: weekly }, open-pull-requests-limit: 5 }
+  - { package-ecosystem: gomod, directory: /src/shippingservice,       schedule: { interval: weekly }, open-pull-requests-limit: 5 }
+  # Node
+  - { package-ecosystem: npm, directory: /src/currencyservice, schedule: { interval: weekly }, open-pull-requests-limit: 5 }
+  - { package-ecosystem: npm, directory: /src/paymentservice,  schedule: { interval: weekly }, open-pull-requests-limit: 5 }
+  # Python (pip-compile: requirements.in → requirements.txt)
+  - { package-ecosystem: pip, directory: /src/emailservice,          schedule: { interval: weekly }, open-pull-requests-limit: 5 }
+  - { package-ecosystem: pip, directory: /src/recommendationservice, schedule: { interval: weekly }, open-pull-requests-limit: 5 }
+  # Java
+  - { package-ecosystem: gradle, directory: /src/adservice, schedule: { interval: weekly }, open-pull-requests-limit: 5 }
+  # .NET
+  - { package-ecosystem: nuget, directory: /src/cartservice/src, schedule: { interval: weekly }, open-pull-requests-limit: 5 }
+  # Base images — the FROM lines (tags and digests) of every built service
+  - package-ecosystem: docker
+    directories:
+      - /src/adservice
+      - /src/cartservice/src
+      - /src/checkoutservice
+      - /src/currencyservice
+      - /src/emailservice
+      - /src/frontend
+      - /src/paymentservice
+      - /src/productcatalogservice
+      - /src/recommendationservice
+      - /src/shippingservice
+    schedule: { interval: weekly }
+    open-pull-requests-limit: 10
+  - { package-ecosystem: github-actions, directory: /, schedule: { interval: weekly } }

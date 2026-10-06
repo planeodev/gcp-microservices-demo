@@ -1,5 +1,28 @@
 # GitHub Actions Workflows
 
+> **planeodev fork (2026-10-01).** This fork builds its images with the org's Vionix CI/CD reusable
+> workflow — **one caller file per service**, `docker-multiarch-cicd-<service>.yaml` (ten files, not a
+> matrix: every call of the reusable produces identically named jobs, so matrix legs collide). Each
+> passes `docker-compose-context` = that service's `build.context` (the reusable overrides the bake
+> context with it; the default `.` looks for a root Dockerfile), bakes its target from the root
+> `docker-compose.yaml` and publishes to `ghcr.io/planeodev/gcp-microservices-demo/<service>`
+> (PR previews under `pr/<N>/<service>`, `main` builds, `v*` releases); a second job `scan` (`needs: docker`) runs the org's image-security reusable on that image — SBOM from the build, `trivy sbom`, fails the run on CRITICAL findings — with the reusable's SBOM,
+> build-info and SLSA report. The upstream pipelines below — `ci-pr.yaml`, `ci-main.yaml`,
+> `push-deploy.yaml`, `cleanup.yaml` — were **removed** here: they need Google's self-hosted GCE
+> runners and push to Google's own project, so on this fork they would only queue forever. The
+> ubuntu-hosted validation workflows (`kustomize-build-ci`, `helm-chart-ci`, `terraform-validate-ci`)
+> are kept. Everything below this note describes the upstream setup, for reference.
+>
+> **`pr-security-synchronizer.yaml`** (thin caller of the org's reusable) waits for every build +
+> scan of the PR head, posts ONE consolidated table (per image: build, scan, counts, blocking
+> findings with their fix path) and fails the PR when an image is above its policy. With
+> `accept-trivy-job-patches: critical` it commits only the **deterministic** fixes (Go modules, pip
+> pins). **Every fix is a declarative source change that rebuilds the image** — the built image is
+> never patched afterwards. OS packages are fixed by a newer base
+> image (`base-image`: Dependabot's `docker` ecosystem bumps the `FROM`, see `.github/dependabot.yml`)
+> or, when the Dockerfile installs the package itself, by pinning it on that `apk`/`apt` line
+> (`dockerfile`). Language dependencies are Dependabot's (`dependabot-lang`).
+
 This page describes the CI/CD workflows for the Online Boutique app, which run in [Github Actions](https://github.com/GoogleCloudPlatform/microservices-demo/actions).
 
 ## Infrastructure
