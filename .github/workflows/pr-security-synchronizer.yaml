@@ -12,7 +12,7 @@ on:
 jobs:
   sync:
     name: 🛡️ synchronizer
-    uses: ohanalabs-ai/github-platform/.github/workflows/pr-security-synchronizer.yaml@b170a75879494019414db0ce20eddbb3952615a6
+    uses: ohanalabs-ai/github-platform/.github/workflows/pr-security-synchronizer.yaml@49dd586020fda4c3e5a6ecc99905245521106081
     permissions:
       contents: write        # the one fix commit on this PR
       pull-requests: write   # sticky consolidated comment
