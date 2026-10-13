@@ -13,6 +13,13 @@
 > ubuntu-hosted validation workflows (`kustomize-build-ci`, `helm-chart-ci`, `terraform-validate-ci`)
 > are kept. Everything below this note describes the upstream setup, for reference.
 >
+> A third job, `scan-attest` (push / tag builds only, never PRs), adds the **Planeo deploy stamp**:
+> the org's [`docker-scan-attest.yaml`](https://github.com/ohanalabs-ai/github-platform/blob/main/.github/workflows/docker-scan-attest.yaml)
+> scans the digest (report-only on `main` — the deferred CVEs of the 2026-10-05 decision) and attests it
+> with the planeodev Vault Transit key (secretless: Tailscale OIDC federated identity + GitHub OIDC → Vault),
+> which Planeo admission trusts. The build's **public** GitHub attestation (this repo is public) stays; each
+> run's summary classifies both proofs. Tags (`v*`) are scanned but not stamped (signing refs: `main`, `develop`).
+>
 > **`pr-security-synchronizer.yaml`** (thin caller of the org's reusable) waits for every build +
 > scan of the PR head, posts ONE consolidated table (per image: build, scan, counts, blocking
 > findings with their fix path) and fails the PR when an image is above its policy. With

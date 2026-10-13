@@ -74,3 +74,27 @@ jobs:
     with:
       image: ${{ needs.docker.outputs.image_ref }}
       severity-threshold: CRITICAL
+
+  # 🔏 Planeo deploy stamp (owner rule 2026-10-13: scan + attestation on every repository) — the
+  # reusable scans (report-only on main: the deferred CVEs of the 2026-10-05 decision still apply) and
+  # attests this digest with the planeodev Vault Transit key, which Planeo admission trusts. The public
+  # GitHub attestation the build makes (public repo, attestation-mode auto) stays — the run summary
+  # shows both. Not on pull requests: the `scan` job above gates PRs; the merge's push build is stamped.
+  scan-attest:
+    name: 🔏 paymentservice deploy stamp
+    needs: docker
+    if: github.event_name != 'pull_request'
+    uses: ohanalabs-ai/github-platform/.github/workflows/docker-scan-attest.yaml@main
+    permissions:
+      contents: read
+      packages: write           # push the signature / attestations next to the image
+      id-token: write           # GitHub OIDC → Tailscale federated identity + Vault (no secret)
+      attestations: read        # classify the build's public GitHub attestation in the summary
+      pull-requests: write      # scan PR comments (unused here; required by the nested reusable)
+    with:
+      image: ${{ needs.docker.outputs.image_ref }}
+      build-identity: ${{ needs.docker.outputs.build_identity }}
+      builder-id: ${{ needs.docker.outputs.builder_id }}
+      severity-threshold: NONE  # report-only (2026-10-05 decision); raise to CRITICAL once remediated
+      tailscale-oauth-client-id: ${{ vars.TS_FEDERATED_CLIENT_ID }}
+      tailscale-audience: ${{ vars.TS_FEDERATED_AUDIENCE }}
